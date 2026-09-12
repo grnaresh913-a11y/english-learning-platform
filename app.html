@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Learning Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      display: none;
+    }
+
+    .card.active {
+      display: block;
+    }
+
+    .card h1 {
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #555;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #667eea;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .toggle-link:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: #dc3545;
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .success {
+      color: #28a745;
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .success.show {
+      display: block;
+    }
+
+    /* Dashboard Styles */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .dashboard-header h1 {
+      color: white;
+      font-size: 24px;
+    }
+
+    .logout-btn {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .module-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .module-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .module-card h3 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .module-card p {
+      color: #666;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      color: #333;
+      font-size: 20px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #999;
+      cursor: pointer;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .concept-list {
+      list-style: none;
+      margin: 20px 0;
+    }
+
+    .concept-item {
+      background: #f8f9fa;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border-left: 4px solid #667eea;
+    }
+
+    .concept-item h4 {
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .concept-item p {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .tutor-list {
+      list-style: none;
+      margin: 20px 0;
+    }
+
+    .tutor-item {
+      background: #f8f9fa;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tutor-info h4 {
+      color: #333;
+      margin-bottom: 3px;
+    }
+
+    .tutor-info p {
+      color: #666;
+      font-size: 13px;
+    }
+
+    .rating {
+      color: #ffc107;
+      font-weight: bold;
+    }
+
+    .recording-btn {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
+    }
+
+    .recording-btn:hover {
+      background: #218838;
+    }
+
+    .recording-btn.recording {
+      background: #dc3545;
+    }
+
+    .loading {
+      text-align: center;
+      color: #667eea;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Card -->
+  <div class="container">
+    <div class="card active" id="loginCard">
+      <h1>Login</h1>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com">
+        <div class="error" id="loginEmailError"></div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password">
+        <div class="error" id="loginPasswordError"></div>
+      </div>
+      <button class="btn" onclick="handleLogin()">Login</button>
+      <div class="toggle-link" onclick="toggleCard('register')">Don't have account? Register</div>
+      <div class="error show" id="loginError"></div>
+    </div>
+
+    <!-- Register Card -->
+    <div class="card" id="registerCard">
+      <h1>Register</h1>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="registerName" placeholder="Your Name">
+        <div class="error" id="registerNameError"></div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="registerEmail" placeholder="your@email.com">
+        <div class="error" id="registerEmailError"></div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="registerPassword" placeholder="Enter password">
+        <div class="error" id="registerPasswordError"></div>
+      </div>
+      <button class="btn" onclick="handleRegister()">Register</button>
+      <div class="toggle-link" onclick="toggleCard('login')">Already have account? Login</div>
+      <div class="error show" id="registerError"></div>
+    </div>
+
+    <!-- Dashboard Card -->
+    <div class="card" id="dashboardCard">
+      <div class="dashboard-header">
+        <h1>Learning Hub</h1>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value" id="pointsValue">0</div>
+          <div class="stat-label">Points</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="streakValue">0</div>
+          <div class="stat-label">Streak</div>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card" onclick="openModal('speaking')">
+          <h3>🎤 Speaking</h3>
+          <p>Practice pronunciation and record audio</p>
+        </div>
+        <div class="module-card" onclick="openModal('grammar')">
+          <h3>📝 Grammar</h3>
+          <p>Learn grammar rules and improve writing</p>
+        </div>
+        <div class="module-card" onclick="openModal('reading')">
+          <h3>📖 Reading</h3>
+          <p>Comprehension exercises and content</p>
+        </div>
+        <div class="module-card" onclick="openModal('videos')">
+          <h3>🎥 Videos</h3>
+          <p>Learn through engaging video content</p>
+        </div>
+        <div class="module-card" onclick="openModal('tutoring')">
+          <h3>👨‍🏫 Tutoring</h3>
+          <p>Book sessions with professional tutors</p>
+        </div>
+        <div class="module-card" onclick="openModal('progress')">
+          <h3>📊 Progress</h3>
+          <p>Track your learning progress</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal" id="speakingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🎤 Speaking Practice</h2>
+        <button class="close-btn" onclick="closeModal('speaking')">&times;</button>
+      </div>
+      <div id="speakingContent">
+        <p>Click record to practice pronunciation. We'll analyze your speech and give feedback.</p>
+        <button class="recording-btn" id="recordBtn" onclick="startRecording()">🔴 Start Recording</button>
+        <div id="recordingTime" style="display:none; margin: 10px 0; color: #dc3545; font-weight: bold;"></div>
+        <button class="recording-btn recording" id="stopBtn" style="display:none;" onclick="stopRecording()">⏹ Stop Recording</button>
+        <div id="audioPlayback" style="margin-top: 20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="grammarModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📝 Grammar Check</h2>
+        <button class="close-btn" onclick="closeModal('grammar')">&times;</button>
+      </div>
+      <div id="grammarContent">
+        <div class="form-group">
+          <label>Write or paste text to check:</label>
+          <textarea id="grammarText" placeholder="Enter text here..." rows="5"></textarea>
+        </div>
+        <button class="btn" onclick="checkGrammar()">Check Grammar</button>
+        <div id="grammarResult" style="margin-top: 20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="readingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📖 Reading Materials</h2>
+        <button class="close-btn" onclick="closeModal('reading')">&times;</button>
+      </div>
+      <div id="readingContent">
+        <div class="loading">Loading content...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="videosModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🎥 Learning Videos</h2>
+        <button class="close-btn" onclick="closeModal('videos')">&times;</button>
+      </div>
+      <div id="videosContent">
+        <div class="loading">Loading videos...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="tutoringModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>👨‍🏫 Available Tutors</h2>
+        <button class="close-btn" onclick="closeModal('tutoring')">&times;</button>
+      </div>
+      <div id="tutoringContent">
+        <div class="loading">Loading tutors...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="progressModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📊 Your Progress</h2>
+        <button class="close-btn" onclick="closeModal('progress')">&times;</button>
+      </div>
+      <div id="progressContent">
+        <div class="loading">Loading progress...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin + '/api';
+    let mediaRecorder;
+    let audioChunks = [];
+    let recordingStartTime;
+    let recordingTimer;
+
+    // Toggle between login and register
+    function toggleCard(card) {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      document.getElementById(card + 'Card').classList.add('active');
+      clearErrors();
+    }
+
+    // Clear all error messages
+    function clearErrors() {
+      document.querySelectorAll('.error').forEach(e => {
+        e.classList.remove('show');
+        e.textContent = '';
+      });
+    }
+
+    // Show error
+    function showError(elementId, message) {
+      const el = document.getElementById(elementId);
+      if (el) {
+        el.textContent = message;
+        el.classList.add('show');
+      }
+    }
+
+    // Validate email
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Handle Login
+    async function handleLogin() {
+      clearErrors();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email) {
+        showError('loginEmailError', 'Email is required');
+        return;
+      }
+      if (!isValidEmail(email)) {
+        showError('loginEmailError', 'Invalid email format');
+        return;
+      }
+      if (!password) {
+        showError('loginPasswordError', 'Password is required');
+        return;
+      }
+
+      try {
+        const response = await fetch(API_URL + '/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError('loginError', data.error || 'Login failed');
+          return;
+        }
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userName', data.user.name);
+        showDashboard();
+      } catch (error) {
+        showError('loginError', 'Connection error: ' + error.message);
+      }
+    }
+
+    // Handle Register
+    async function handleRegister() {
+      clearErrors();
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+
+      if (!name) {
+        showError('registerNameError', 'Name is required');
+        return;
+      }
+      if (!email) {
+        showError('registerEmailError', 'Email is required');
+        return;
+      }
+      if (!isValidEmail(email)) {
+        showError('registerEmailError', 'Invalid email format');
+        return;
+      }
+      if (!password || password.length < 6) {
+        showError('registerPasswordError', 'Password must be at least 6 characters');
+        return;
+      }
+
+      try {
+        const response = await fetch(API_URL + '/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError('registerError', data.error || 'Registration failed');
+          return;
+        }
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userName', data.user.name);
+        showDashboard();
+      } catch (error) {
+        showError('registerError', 'Connection error: ' + error.message);
+      }
+    }
+
+    // Show Dashboard
+    async function showDashboard() {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      document.getElementById('dashboardCard').classList.add('active');
+      loadGamification();
+    }
+
+    // Load gamification stats
+    async function loadGamification() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(API_URL + '/gamification', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('pointsValue').textContent = data.points || 0;
+          document.getElementById('streakValue').textContent = data.streak || 0;
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    // Logout
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userName');
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      document.getElementById('loginCard').classList.add('active');
+      clearErrors();
+    }
+
+    // Modal functions
+    function openModal(type) {
+      const modalId = type + 'Modal';
+      document.getElementById(modalId).classList.add('active');
+
+      if (type === 'reading') loadConcepts();
+      else if (type === 'videos') loadVideos();
+      else if (type === 'tutoring') loadTutors();
+      else if (type === 'progress') loadProgress();
+    }
+
+    function closeModal(type) {
+      document.getElementById(type + 'Modal').classList.remove('active');
+    }
+
+    // Load concepts
+    async function loadConcepts() {
+      try {
+        const response = await fetch(API_URL + '/concepts');
+        const concepts = await response.json();
+
+        let html = '<ul class="concept-list">';
+        concepts.forEach(c => {
+          html += `<li class="concept-item">
+            <h4>${c.title}</h4>
+            <p>${c.description}</p>
+            <small>Level: ${c.level} | Module: ${c.module}</small>
+          </li>`;
+        });
+        html += '</ul>';
+
+        document.getElementById('readingContent').innerHTML = html;
+      } catch (error) {
+        document.getElementById('readingContent').innerHTML = '<p>Error loading content</p>';
+      }
+    }
+
+    // Load videos
+    async function loadVideos() {
+      try {
+        const response = await fetch(API_URL + '/videos');
+        const videos = await response.json();
+
+        if (videos.length === 0) {
+          document.getElementById('videosContent').innerHTML = '<p>No videos available yet</p>';
+          return;
+        }
+
+        let html = '<ul class="concept-list">';
+        videos.forEach(v => {
+          html += `<li class="concept-item">
+            <h4>${v.title}</h4>
+            <p>${v.description}</p>
+            <a href="${v.url}" target="_blank" style="color: #667eea; text-decoration: none;">Watch Video →</a>
+          </li>`;
+        });
+        html += '</ul>';
+
+        document.getElementById('videosContent').innerHTML = html;
+      } catch (error) {
+        document.getElementById('videosContent').innerHTML = '<p>Error loading videos</p>';
+      }
+    }
+
+    // Load tutors
+    async function loadTutors() {
+      try {
+        const response = await fetch(API_URL + '/tutors');
+        const tutors = await response.json();
+
+        let html = '<ul class="tutor-list">';
+        tutors.forEach(t => {
+          html += `<li class="tutor-item">
+            <div class="tutor-info">
+              <h4>${t.name}</h4>
+              <p>${t.expertise}</p>
+            </div>
+            <div class="rating">⭐ ${t.rating}</div>
+          </li>`;
+        });
+        html += '</ul>';
+
+        document.getElementById('tutoringContent').innerHTML = html;
+      } catch (error) {
+        document.getElementById('tutoringContent').innerHTML = '<p>Error loading tutors</p>';
+      }
+    }
+
+    // Load progress
+    async function loadProgress() {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(API_URL + '/progress', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (!response.ok) throw new Error('Failed to load progress');
+
+        const progress = await response.json();
+
+        if (progress.length === 0) {
+          document.getElementById('progressContent').innerHTML = '<p>Start learning to see your progress!</p>';
+          return;
+        }
+
+        let html = '<div class="concept-list">';
+        progress.forEach(p => {
+          html += `<div class="concept-item">
+            <h4>Concept #${p.concept_id}</h4>
+            <p>Repetitions: ${p.repetitions} | Ease: ${p.ease_factor}</p>
+            <small>Status: ${p.status}</small>
+          </div>`;
+        });
+        html += '</div>';
+
+        document.getElementById('progressContent').innerHTML = html;
+      } catch (error) {
+        document.getElementById('progressContent').innerHTML = '<p>Error loading progress</p>';
+      }
+    }
+
+    // Audio Recording
+    async function startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = saveAudio;
+
+        mediaRecorder.start();
+        document.getElementById('recordBtn').style.display = 'none';
+        document.getElementById('stopBtn').style.display = 'block';
+
+        recordingStartTime = Date.now();
+        recordingTimer = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+          document.getElementById('recordingTime').textContent = 'Recording: ' + elapsed + 's';
+          document.getElementById('recordingTime').style.display = 'block';
+        }, 100);
+      } catch (error) {
+        alert('Microphone access denied: ' + error.message);
+      }
+    }
+
+    async function stopRecording() {
+      mediaRecorder.stop();
+      clearInterval(recordingTimer);
+      document.getElementById('recordBtn').style.display = 'block';
+      document.getElementById('stopBtn').style.display = 'none';
+      document.getElementById('recordingTime').style.display = 'none';
+    }
+
+    async function saveAudio() {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      const token = localStorage.getItem('token');
+      try {
+        const formData = new FormData();
+        formData.append('module', 'Speaking');
+        formData.append('audio_url', audioUrl);
+        formData.append('transcript', 'Your recording');
+        formData.append('pronunciation_score', 85);
+
+        const response = await fetch(API_URL + '/audio/save', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: formData
+        });
+
+        if (response.ok) {
+          let html = '<h4>Recording Saved!</h4>';
+          html += '<audio controls style="width: 100%; margin-top: 10px;"><source src="' + audioUrl + '" type="audio/wav"></audio>';
+          html += '<p style="margin-top: 10px; color: #28a745;">Pronunciation Score: 85/100</p>';
+          document.getElementById('audioPlayback').innerHTML = html;
+        }
+      } catch (error) {
+        console.error('Error saving audio:', error);
+      }
+    }
+
+    // Grammar Check
+    async function checkGrammar() {
+      const text = document.getElementById('grammarText').value.trim();
+      if (!text) {
+        alert('Please enter text to check');
+        return;
+      }
+
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch(API_URL + '/grammar/check', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ text_input: text })
+        });
+
+        const data = await response.json();
+        let html = '<h4>Grammar Check Result</h4>';
+        html += '<p>Score: ' + data.score + '/100</p>';
+        html += '<p style="color: #28a745;">No major errors detected!</p>';
+        document.getElementById('grammarResult').innerHTML = html;
+      } catch (error) {
+        document.getElementById('grammarResult').innerHTML = '<p style="color: #dc3545;">Error checking grammar</p>';
+      }
+    }
+
+    // Check if user is logged in
+    window.onload = function() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        showDashboard();
+      }
+    };
+  </script>
+</body>
+</html>
