@@ -2,10 +2,10 @@
   "name": "english-learning-platform",
   "version": "3.0.0",
   "description": "AI-powered English learning platform - Phase 3 Complete",
-  "main": "server-phase3.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server-phase3.js",
+    "dev": "node server.js",
     "build": "echo 'Build complete'",
     "seed-db": "node scripts/seedDatabase.js"
   },
