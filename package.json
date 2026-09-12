@@ -1,0 +1,28 @@
+{
+  "name": "english-learning-platform",
+  "version": "3.0.0",
+  "description": "AI-powered English learning platform - Complete",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["english", "learning", "language", "ai"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "pg": "^8.8.0",
+    "jsonwebtoken": "^9.0.0",
+    "bcryptjs": "^2.4.3",
+    "axios": "^1.4.0",
+    "@anthropic-ai/sdk": "^0.8.0",
+    "uuid": "^9.0.0"
+  },
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
+  }
+}
