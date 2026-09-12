@@ -4,7 +4,7 @@
   "description": "AI-powered English learning platform - Phase 3 Complete",
   "main": "server-phase3.js",
   "scripts": {
-    "start": "node server-phase3.js",
+    "start": "node server.js",
     "dev": "nodemon server-phase3.js",
     "build": "echo 'Build complete'",
     "seed-db": "node scripts/seedDatabase.js"
